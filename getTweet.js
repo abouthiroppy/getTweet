@@ -288,7 +288,7 @@ function startStream(userStream){
 
 function updateTweet(userStream,str){
     //userStream.updateStatus('@'+userName+" "+str, function (data) {
-    });
+    //});
 }
 
 function pushDB(data,userStream){
