@@ -156,7 +156,6 @@ function startStream(userStream) {
   userStream.stream('user', function(stream) {
 
     stream.on('data', function(data) {
-      console.log(data.text);
       //log
       if (data.user != undefined) {
         var DD = new Date();
