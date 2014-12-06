@@ -137,7 +137,6 @@ fs.readFile "./keys.txt", "utf8", (err, text) ->
 startStream = (userStream) ->
   userStream.stream "user", (stream) ->
     stream.on "data", (data) ->
-      console.log data
       if data.user?
         DD = new Date()
         month = DD.getMonth() + 1
@@ -152,7 +151,7 @@ startStream = (userStream) ->
       text = (if ("text" of data) then data.text else "")
 
       #もしリプライが来たらそれは追加項目である可能性がある。
-      search userStream, data  if data.in_reply_to_status_id_str?
+      # search userStream, data  if data.in_reply_to_status_id_str?
       obj = {}
       inputData = (obj) ->
         toDoubleDigits = (num) ->
@@ -184,136 +183,121 @@ startStream = (userStream) ->
         now = null
         tmpData
 
-#       if text is "会社" or text is "出社"
-#         obj.place = "Eyes, JAPAN"
-#         obj.tweet = text
-#         obj.memo = ""
-#         obj.prefecture = "福島県 会津若松市"
-#         obj.img = ""
-#         pushDB inputData(obj), userStream
-#       else if text is "らぼ" or text is "ラボ"
-#         obj.place = "画像処理学講座"
-#         obj.tweet = text
-#         obj.memo = ""
-#         obj.prefecture = "福島県 会津大学"
-#         obj.img = ""
-#         pushDB inputData(obj), userStream
-#       else if text is "大学"
-#         obj.place = "会津大学"
-#         obj.tweet = text
-#         obj.memo = ""
-#         obj.prefecture = "福島県 会津大学"
-#         obj.img = ""
-#         pushDB inputData(obj), userStream
-#       else if text is "帰宅"
-#         obj.place = "家(帰宅)"
-#         obj.tweet = text
-#         obj.memo = ""
-#         obj.prefecture = "福島県 会津若松市"
-#         obj.img = ""
-#         pushDB inputData(obj), userStream
+      if text is "会社" or text is "出社"
+        obj.place = "Eyes, JAPAN"
+        obj.tweet = text
+        obj.memo = ""
+        obj.prefecture = "福島県 会津若松市"
+        obj.img = ""
+        pushDB inputData(obj), userStream
+      else if text is "らぼ" or text is "ラボ"
+        obj.place = "画像処理学講座"
+        obj.tweet = text
+        obj.memo = ""
+        obj.prefecture = "福島県 会津大学"
+        obj.img = ""
+        pushDB inputData(obj), userStream
+      else if text is "大学"
+        obj.place = "会津大学"
+        obj.tweet = text
+        obj.memo = ""
+        obj.prefecture = "福島県 会津大学"
+        obj.img = ""
+        pushDB inputData(obj), userStream
+      else if text is "帰宅"
+        obj.place = "家(帰宅)"
+        obj.tweet = text
+        obj.memo = ""
+        obj.prefecture = "福島県 会津若松市"
+        obj.img = ""
+        pushDB inputData(obj), userStream
 
-#       # swarmapp
-#       else unless text.indexOf("I'm at") is -1
-#         splitText = text.split(" ")
-#         place = ""
-#         u = 2
+      # swarmapp
+      else unless text.indexOf("I'm at") is -1
+        splitText = text.split(" ")
+        place = ""
+        u = 2
 
-#         while u < splitText.length
+        while u < splitText.length
 
-#           #twitterユーザが複数人の時
-#           if splitText[u][0] is "w" and splitText[u][1] is "/"
-#             obj.prefecture = ""
-#             break
+          #twitterユーザが複数人の時
+          if splitText[u][0] is "w" and splitText[u][1] is "/"
+            obj.prefecture = ""
+            break
 
-#           #一人の時は県、地名がtweetに入る
-#           else if splitText[u] is "in"
+          #一人の時は県、地名がtweetに入る
+          else if splitText[u] is "in"
 
-#             #地名
-#             placeText = splitText[u + 1].split(",")
-#             tmpStr1 = placeText[0]
+            #地名
+            placeText = splitText[u + 1].split(",")
+            tmpStr1 = placeText[0]
 
-#             #県
-#             # var tmpStr2 = splitText[u+1].split(')');
-#             if splitText[u + 2].indexOf("swarmapp") isnt -1
-#               obj.prefecture = tmpStr1
-#               break
-#             else
-#               obj.prefecture = splitText[u + 2] + "," + tmpStr1
-#               break
+            #県
+            if splitText[u + 2].indexOf("swarmapp") isnt -1
+              obj.prefecture = tmpStr1
+              break
+            else
+              obj.prefecture = splitText[u + 2] + "," + tmpStr1
+              break
 
-#           #場所が空白で区切られている場合はここに入る
-#           place += splitText[u]
-#           place += " "
-#           u++
-#         obj.place = place
-#         obj.tweet = text
-#         obj.memo = ""
-#         obj.img = ""
-#         pushDB inputData(obj), userStream
-#       return
+          #場所が空白で区切られている場合はここに入る
+          place += splitText[u]
+          place += " "
+          u++
+        obj.place = place
+        obj.tweet = text
+        obj.memo = ""
+        obj.img = ""
+        pushDB inputData(obj), userStream
+      return
+    return
+  return
 
-#     return
-
-#   return
 # updateTweet = (userStream, str) ->
-
 # #userStream.updateStatus('@'+userName+" "+str, function (data) {
 # #});
-# pushDB = (data, userStream) ->
 
-#   #
-#   #      screen_name: String,
-#   #      tweet: String,
-#   #      place: String,
-#   #      memo: String,
-#   #      time: String,
-#   #      prefecture: String,
-#   #      year: String,
-#   #      month: String,
-#   #      day: String,
-#   #      weekday: String
-#   #
+pushDB = (data, userStream) ->
+  user = new User()
+  user.screen_name = data.screenName
+  user.tweet = data.tweet
+  user.place = data.place
+  user.memo = data.memo
+  user.time = data.time
+  user.prefecture = data.prefecture
+  user.year = data.year
+  user.month = data.month
+  user.day = data.day
+  user.weekday = data.weekday
+  user.img = data.img
+  User.find
+    place: user.place
+  , (err, docs) ->
+    saveDB = ->
+      user.save (err) ->
+        console.log err  if err
+        user = null
+        return
 
-#   user = new User()
-#   user.screen_name = data.screenName
-#   user.tweet = data.tweet
-#   user.place = data.place
-#   user.memo = data.memo
-#   user.time = data.time
-#   user.prefecture = data.prefecture
-#   user.year = data.year
-#   user.month = data.month
-#   user.day = data.day
-#   user.weekday = data.weekday
-#   user.img = data.img
-#   User.find
-#     place: user.place
-#   , (err, docs) ->
-#     saveDB = ->
-#       user.save (err) ->
-#         console.log err  if err
-#         user = null
-#         return
+      updateTweet userStream, "-" + user["_id"] + "  http://place.about-hiroppy.org" + user["place_id"]
+      return
 
-#       updateTweet userStream, "-" + user["_id"] + "  http://place.about-hiroppy.org" + user["place_id"]
-#       return
+    if docs.length is 0
 
-#     if docs.length is 0
+      #place_idの設定
+      randA = Math.floor(Math.random() * 999) + 1
+      randID = ("0000" + randA).slice(-4)
+      randB = Math.floor(Math.random() * 999) + 1
+      randID += ("0000" + randB).slice(-4)
+      user.place_id = randID
+      saveDB()
+    else
+      user.place_id = docs[0].place_id
+      saveDB()
+    return
 
-#       #place_idの設定
-#       randA = Math.floor(Math.random() * 999) + 1
-#       randID = ("0000" + randA).slice(-4)
-#       randB = Math.floor(Math.random() * 999) + 1
-#       randID += ("0000" + randB).slice(-4)
-#       user.place_id = randID
-#       saveDB()
-#     else
-#       user.place_id = docs[0].place_id
-#       saveDB()
-#     return
+  return
 
-#   return
 # findDB = ->
 #   User.find {}, (err, docs) ->
 #     i = 0
